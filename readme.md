@@ -13,20 +13,39 @@ Coinvoy is an online payment processor with an integrated exchange feature for e
 Just include coinvoy.php in your document and use it freely.
 
 ```
-include_once('./lib/coinvoy.php');
+$options = array(
+	"address" => "receiving address",
+	"callback"=> "http://yourwebsite/ipn.php",
+	"provider"=> "company name",
+	"email"   => "email@email.com",
+	"escrow"  => false,
+);
+$cv = new coinvoy($options);
 
-$cv = new coinvoy();
-$cv->setItem($orderID, $description);
+$payment = array(
+	'orderID'     => '{secret_identifier}',
+	'amount'      => '{amount_to_charge}'.
+	'currency'    => '{currency_of_amount}',
+	'payWith'     => '{currency_of_payment}',
+	'description' => '{item_or_service_description}'
+);
 
-//Create invoice
-$invoice = $cv->invoice($amount, $currency, $payWith);
+$invoice = $cv->invoice($payment);
 
 echo $invoice->url; 	#payment url to display with an iframe
 echo $invoice->html; 	#default behaviour, includes an iframe and js listener
 echo $invoice->address; #display payment address
+echo $invoice->key;		#this key is used for completing the escrow !important! do not lose
 
+$button = array(
+	'orderID'     => '{secret_identifier}',
+	'amount'      => '{amount_to_charge}'.
+	'currency'    => '{currency_of_amount}',
+	'description' => '{item_or_service_description}',
+	'address'	  => '{newReceiverAddress}'
+);
 //Create payment button
-$button = $cv->button($amount, $currency, $buttonText);
+$button = $cv->button($button);
 
 echo $button->hash; #unique hash for occurring usage
 
@@ -37,12 +56,14 @@ $cv->invoiceFromHash($button->hash, $payWith, $amount)
 ```
 
 ###List of all commands:
-- invoice($amount, $currency, $payWith);
-- button($amount, $currency, $buttonText);
-- donation($buttonText);
+- invoice($payment);
+- button($button);
+- donation($donation);
 - invoiceFromHash($hash, $payWith, $amount); 
 - validateNotification($invoiceId, $hash, $orderId);
 - getStatus($invoiceId);
+- getInvoice($invoiceId);
+- completeEscrow($key);
 
 Your feedback and suggestions are very much welcome. Please contact support@coinvoy.net for any input. 
 
