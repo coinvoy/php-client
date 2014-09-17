@@ -3,39 +3,32 @@
 #------ PHP CLIENT FOR API ----
 #------------------------------
 
-class coinvoy {
-	# Common Variables
-	# address  - bitcoin, litecoin or dogecoin address to receive to
-	# callback - notification url to be called at all stages : new > approved > confirmed > completed or cancelled
-	# escrow   - if payment is escrowed or not : true / false
-	#----------------------
-	private $cpOptions;
-
-	function __construct($options = array())
-	{
-		$this->cpOptions = $options;
-	}
+class Coinvoy {
+	const MINAMOUNT = 0.0005;
 
 	#----------------------				
 	#----------------------------------------------------------------
 	# Create new invoice to receive a payment
 	# Required : $amount		# Billed amount
+	# Required : $address		# Receiving address
 	# Optional : $currency		# Billed currency - "BTC","LTC" or "DOGE" - defaults to "BTC"
-	# Optional : $payWith		# Payment Currency - "BTC", "LTC" or "DOGE" - defaults to "BTC"
+	# Optional : $options 		# Invoice options : orderID, callback, payWith, provider, email, item, description, escrow 
 	#----------------------------------------------------------------
-	public function invoice($payment = array()) 
+	public function invoice($amount, $address, $currency="BTC", $options=array()) 
 	{
+		if (floatval($amount) < self::MINAMOUNT)
+        	return $this->error("Amount cannot be less than 0.0002");
 
-		if ( empty( $payment ) || !isset($payment['amount']))
-			return $this->error("Missing payment information");
+		if (!in_array($currency, array("BTC","LTC","DOGE","USD")))
+			return $this->error("Currency invalid");
 
-        if (floatval($payment['amount']) < 0.0005)
-        	return $this->error("Amount cannot be less than 0.0005");
+		if (strlen($address) < 30 || strlen($address) > 50)
+			return $this->error("Address invalid");
 
-		$payment = array_merge($this->cpOptions, $payment);
+		$payment = array_merge($options, array("amount"=>$amount,"address"=>$address,"currency"=>$currency));
 
 		try {
-			$res = $this->apiRequest('https://coinvoy.net/api/newInvoice', $payment);
+			$res = $this->apiRequest('/api/newInvoice', $payment);
 		} catch (Exception $e) {
 			return $this->error("An error occured: ".$e->getMessage());
 		}
@@ -45,17 +38,18 @@ class coinvoy {
 
 	#----------------------------------------------------------------
 	# Create new donation template to use in client side
-	# Optional : $description	# Description displayed in payment
-	# Optional : $orderID		# Donation request ID
-	# Optional : $btnText		# Button text for default donation button
+	# Required : $address		# Receiving address
+	# Optional : $options		# Donation options: orderID, callback, payWith, provider, email, item, description, buttonText
 	#----------------------------------------------------------------
-	public function donation($donation = array())
+	public function donation($address, $options=array())
 	{
+		if (strlen($address) < 30 || strlen($address) > 50)
+			return $this->error("Address invalid");
 
-		$donation = array_merge($this->cpOptions, $donation);
+		$donation = array_merge($options, array("address"=>$address));
 
 		try {
-			$res = $this->apiRequest('https://coinvoy.net/api/getDonation', $donation);
+			$res = $this->apiRequest('/api/getDonation', $donation);
 		} catch (Exception $e) {
 			return $this->error("An error occured: ".$e->getMessage());
 		}
@@ -66,22 +60,26 @@ class coinvoy {
 	#----------------------------------------------------------------
 	# Create new invoice template to use in client side
 	# Required : $amount		# Billed amount
+	# Required : $address		# Receiving address
 	# Optional : $currency		# Billed currency - "BTC","LTC" or "DOGE"
-	# Optional : $payWith		# Payment Currency - "BTC", "LTC" or "DOGE"
+	# Optional : $options		# Donation options: orderID, callback, payWith, provider, email, item, description, buttonText
 	#----------------------------------------------------------------
-	public function button($button)
+	public function button($amount, $address, $currency="BTC", $options=array())
 	{
 
-		if ( empty( $button ) || !isset($button['amount']))
-			return $this->error("Missing payment information");
+		if (floatval($amount) < self::MINAMOUNT)
+        	return $this->error("Amount cannot be less than 0.0002");
 
-        if (floatval($button['amount']) < 0.0005)
-        	return $this->error("Amount cannot be less than 0.0005");
+		if (!in_array($currency, array("BTC","LTC","DOGE","USD")))
+			return $this->error("Currency invalid");
 
-		$button = array_merge($this->cpOptions, $button);
+		if (strlen($address) < 30 || strlen($address) > 50)
+			return $this->error("Address invalid");
+
+		$button = array_merge($options, array("amount"=>$amount,"address"=>$address,"currency"=>$currency));
 
 		try {
-			$res = $this->apiRequest('https://coinvoy.net/api/getButton', $button);
+			$res = $this->apiRequest('/api/getButton', $button);
 		} catch (Exception $e) {
 			return $this->error("An error occured: ".$e->getMessage());
 		}
@@ -93,17 +91,17 @@ class coinvoy {
 	# Creates a live invoice from hash
 	# Params : (string) $hash
 	#		   (string) $payWith
-	#		   (string) $amount [only for donations]
-	# Returns: (bool) True/False
+	# Returns: JSON response
 	#----------------------------------------------
-	public function invoiceFromHash($hash = false, $payWith = "BTC", $amount = false)
+	public function invoiceFromHash($hash = false, $payWith = "BTC")
 	{
 		if ( empty( $hash ) )
 			return $this->error("Missing information. Please supply an invoice hash.");
 
-		$hash = array('hash'=>$hash, 'payWith'=>$payWith, 'amount'=>$amount);
+		$hash = array('hash'=>$hash, 'payWith'=>$payWith);
+
 		try {
-			$res = $this->apiRequest('https://coinvoy.net/api/invoiceHash', $hash);
+			$res = $this->apiRequest('/api/invoiceHash', $hash);
 		} catch (Exception $e) {
 			return $this->error("An error occured: ".$e->getMessage());
 		}
@@ -116,14 +114,15 @@ class coinvoy {
 	# Params : (string) $key
 	# Returns: (object) response or error message
 	#----------------------------------------------
-	public function completeEscrow($key)
+	public function freeEscrow($key)
 	{
 		if ( empty( $key ) )
 			return $this->error("Missing information. Please supply an invoice hash.");
 
 		$data = array('key'=>$key);
+
 		try {
-			$res = $this->apiRequest('https://coinvoy.net/api/freeEscrow', $data);
+			$res = $this->apiRequest('/api/freeEscrow', $data);
 		} catch (Exception $e) {
 			return $this->error("An error occured: ".$e->getMessage());
 		}
@@ -136,16 +135,14 @@ class coinvoy {
 	# Validates received payment notification (IPN)
 	# Params : (string) $invoiceId
 	#		   (string) $hash
+	#		   (string) $orderID
+	#		   (string) $address
 	# Returns: (bool) True/False
 	#----------------------------------------------
-	public function validateNotification($invoiceId, $hash, $orderID)
+	public function validateNotification($invoiceId, $hash, $orderID, $address)
 	{
 		try {
-			if($hash == hash_hmac('sha256', $orderID.":".$invoiceId, $this->cpOptions['address'], TRUE)) {
-				return true;
-			} else {
-				return false;
-			}
+			return $hash == hash_hmac('sha256', $orderID.":".$invoiceId, $address, TRUE);
 		} catch (Exception $e) {
 			return false;
 		}
@@ -168,7 +165,7 @@ class coinvoy {
 	{
 		try {
 			if($invoiceId) {
-				$res = $this->apiRequest('https://coinvoy.net/api/status', array("invoiceId" => $invoiceId));
+				$res = $this->apiRequest('/api/status', array("invoiceId" => $invoiceId));
 				return $res;
 			} else {
 				return $this->error("Please supply an invoice id");
@@ -188,7 +185,7 @@ class coinvoy {
 	{
 		try {
 			if($invoiceId) {
-				$res = $this->apiRequest('https://coinvoy.net/api/invoice', array("invoiceId" => $invoiceId));
+				$res = $this->apiRequest('/api/invoice', array("invoiceId" => $invoiceId));
 				return $res;
 			} else {
 				return $this->error("Please supply an invoice id");
@@ -215,6 +212,7 @@ class coinvoy {
 		# Fill post string
 		$postString = http_build_query($postArray);
 
+		$url = "https://coinvoy.net" . $url;
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_POST, 1);
@@ -222,10 +220,15 @@ class coinvoy {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		# Get result object
-		$res = curl_exec($ch);
-		$res = json_decode($res);
+		$httpres = curl_exec($ch);
 		# Close curl
 		curl_close ($ch);
+
+		try {
+			$res = json_decode($httpres);	
+		} catch (Exception $e) {
+			$res = $httpres;
+		}
 
 		return $res;
 	}

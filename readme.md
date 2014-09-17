@@ -13,57 +13,36 @@ Coinvoy is an online payment processor with an integrated exchange feature for e
 Just include coinvoy.php in your document and use it freely.
 
 ```
-$options = array(
-	"address" => "receiving address",
-	"callback"=> "http://yourwebsite/ipn.php",
-	"provider"=> "company name",
-	"email"   => "email@email.com",
-	"escrow"  => false,
-);
-$cv = new coinvoy($options);
+require_once('./coinvoy.php');
 
-$payment = array(
-	'orderID'     => '{secret_identifier}',
-	'amount'      => '{amount_to_charge}'.
-	'currency'    => '{currency_of_amount}',
-	'payWith'     => '{currency_of_payment}',
-	'description' => '{item_or_service_description}'
-);
+$coinvoy = new Coinvoy();
 
-$invoice = $cv->invoice($payment);
+$amount   = 1.42;                           // Amount of invoice value
+$address  = "your cryptocurrency address"   // Your receiving address for Bitcoin, Litecoin or Dogecoin
+$currency = "BTC";                          // Currency of invoice value
 
-echo $invoice->url; 	#payment url to display with an iframe
-echo $invoice->html; 	#default behaviour, includes an iframe and js listener
-echo $invoice->address; #display payment address
-echo $invoice->key;		#this key is used for completing the escrow !important! do not lose
+$invoice = $coinvoy->invoice(0.001, '1LLmwn5cgZWDVA6UQPN8ggiPCRpbaRVUxp', 'BTC');
 
-$button = array(
-	'orderID'     => '{secret_identifier}',
-	'amount'      => '{amount_to_charge}'.
-	'currency'    => '{currency_of_amount}',
-	'description' => '{item_or_service_description}',
-	'address'	  => '{newReceiverAddress}'
-);
-//Create payment button
-$button = $cv->button($button);
+var_dump($invoice);
 
-echo $button->hash; #unique hash for occurring usage
 
-//use your hash anywhere
-$payWith = "LTC";	# Payment currency - defaults to "BTC"
-$amount = false; 	# Set amount for donations
-$cv->invoiceFromHash($button->hash, $payWith, $amount)
+// $invoice->url; 	    - always find your invoice at https://coinvoy.net/invoice/{id}
+// $invoice->key
+// $invoice->html; 	    # default behaviour, includes an iframe and js listener
+// $invoice->address;   # display payment address
+// $invoice->key;		# this key is used for completing the escrow !important! do not lose
+
 ```
 
 ###List of all commands:
-- invoice($payment);
-- button($button);
-- donation($donation);
-- invoiceFromHash($hash, $payWith, $amount); 
-- validateNotification($invoiceId, $hash, $orderId);
-- getStatus($invoiceId);
-- getInvoice($invoiceId);
-- completeEscrow($key);
+- invoice($amount, $address, $currency, $options);                - creates live invoice
+- button($amount, $address, $currency, $options);                 - prepares a button template
+- donation($address, $options);                                   - prepares a donation template
+- invoiceFromHash($hash, $payWith);                               - creates live invoice from template hash
+- validateNotification(($invoiceId, $hash, $orderID, $address);   - checks if incoming payment notification is valid.
+- getStatus($invoiceId);                                          - current status of invoice [new,approved,confirmed,completed,cancelled]
+- getInvoice($invoiceId);                                         - get latest invoice object
+- freeEscrow($key);                                               - finalize an escrow with its unique key. This action sends funds to receiver
 
 Your feedback and suggestions are very much welcome. Please contact support@coinvoy.net for any input. 
 
