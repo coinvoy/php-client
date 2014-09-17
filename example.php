@@ -2,17 +2,13 @@
 
 	require_once('./coinvoy.php');
 
-	$coinvoy = new Coinvoy();
+	function createInvoice() {
+		$coinvoy = new Coinvoy();
 
-	$amount   = 0.93;
-	$address  = "your cryptocurrency address";
-	$currency = "BTC";
+		$amount   = 0.93;
+		$address  = "your cryptocurrency address";
+		$currency = "BTC";
 
-	createInvoice($coinvoy, $amount, $address, $currency);
-	//getDonation($coinvoy, $address);
-	//getButton($coinvoy, $amount, $address, $currency);
-
-	function createInvoice($coinvoy, $amount, $address, $currency) {
 		$invoice = $coinvoy->invoice($amount, $address, $currency);
 
 		var_dump($invoice);
@@ -22,14 +18,24 @@
 		var_dump($status);
 	}
 
-	function getDonation($coinvoy, $address) {
+	function getDonation() {
+		$coinvoy = new Coinvoy();
+
+		$address  = "your cryptocurrency address";
+
 		$donation = $coinvoy->donation($address);
 
 		var_dump($donation);
 	}
     
 
-	function getButton($coinvoy, $amount, $address, $currency) {
+	function getButton() {
+		$coinvoy = new Coinvoy();
+
+		$amount   = 0.93;
+		$address  = "your cryptocurrency address";
+		$currency = "BTC";
+
 		$button = $coinvoy->button($amount, $address, $currency);
 
 		var_dump($button);
@@ -41,6 +47,11 @@
 		}
 	}
 
+	createInvoice();
+	//getDonation();
+	//getButton();
+
+	
 	
 	
 ?>
