@@ -4,27 +4,42 @@
 
 	$coinvoy = new Coinvoy();
 
-    $invoice = $coinvoy->invoice(0.001, '1LLmwn5cgZWDVA6UQPN8ggiPCRpbaRVUxp', 'BTC');
+	$amount   = 0.93;
+	$address  = "your cryptocurrency address";
+	$currency = "BTC";
 
-	var_dump($invoice);
+	createInvoice($coinvoy, $amount, $address, $currency);
+	//getDonation($coinvoy, $address);
+	//getButton($coinvoy, $amount, $address, $currency);
 
-	$status = $coinvoy->getStatus($invoice->id);
-
-	var_dump($status);
-
-	/*$donation = $coinvoy->donation('1LLmwn5cgZWDVA6UQPN8ggiPCRpbaRVUxp');
-
-	var_dump($donation);*/
-
-	/*$button = $coinvoy->button(0.001, '1Ejo8iRSbeGWjz5uDs6Ab2GoXjsHFw2wLB', 'BTC');
-
-	var_dump($button);
-
-	if ($button->success) {
-		$invoice = $coinvoy->invoiceFromHash($button->hash, 'BTC');
+	function createInvoice($coinvoy, $amount, $address, $currency) {
+		$invoice = $coinvoy->invoice($amount, $address, $currency);
 
 		var_dump($invoice);
-	}*/
+
+		$status = $coinvoy->getInvoice($invoice->id);
+
+		var_dump($status);
+	}
+
+	function getDonation($coinvoy, $address) {
+		$donation = $coinvoy->donation($address);
+
+		var_dump($donation);
+	}
+    
+
+	function getButton($coinvoy, $amount, $address, $currency) {
+		$button = $coinvoy->button($amount, $address, $currency);
+
+		var_dump($button);
+
+		if ($button->success) {
+			$invoice = $coinvoy->invoiceFromHash($button->hash, 'BTC');
+
+			var_dump($invoice);
+		}
+	}
 
 	
 	
