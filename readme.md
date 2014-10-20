@@ -21,7 +21,7 @@ $amount   = 1.42;                           // Amount of invoice value
 $address  = "your cryptocurrency address"   // Your receiving address for Bitcoin, Litecoin or Dogecoin
 $currency = "BTC";                          // Currency of invoice value
 
-$invoice = $coinvoy->invoice(0.001, '1LLmwn5cgZWDVA6UQPN8ggiPCRpbaRVUxp', 'BTC');
+$invoice = $coinvoy->invoice($amount, $address, $currency);
 
 var_dump($invoice);
 
