@@ -70,11 +70,11 @@
 	$currency      = "BTC";
 	$key           = "key returned from escrow payment";
 
-	//createPayment($amount, $currency, $address);
+	createPayment($amount, $currency, $address);
 	//createEscrow($amount, $currency, $address, $returnAddress);
 	//getDonation($address);
 	//getButton($amount, $currency, $address);
 	//freeEscrow($key);
-	cancelEscrow($key);
+	//cancelEscrow($key);
 
 ?>
