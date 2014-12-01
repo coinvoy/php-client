@@ -26,7 +26,7 @@ class Coinvoy {
 	#                                           escrow 
 	# Returns   : JSON object
 	#----------------------------------------------------------------
-	public function payment($amount, $currency='BTC', $address='', $options=array()) 
+	public function payment($amount, $currency, $address='', $options=array()) 
 	{
 		if (floatval($amount) < self::MINAMOUNT)
         	return $this->error('Amount cannot be less than ' . self::MINAMOUNT);
@@ -70,7 +70,7 @@ class Coinvoy {
 	#                                         escrow 
 	# Returns   : JSON object
 	#----------------------------------------------------------------
-	public function button($amount, $currency='BTC', $address='', $options=array())
+	public function button($amount, $currency, $address='', $options=array())
 	{
 
 		if (floatval($amount) < self::MINAMOUNT)
