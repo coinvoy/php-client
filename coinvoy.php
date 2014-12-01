@@ -8,10 +8,10 @@ class Coinvoy {
 
 	#----------------------------------------------------------------
 	# Create new payment
-	# Required : $amount		# Billed amount
-	# Required : $currency	# Billed currency - defaults to "BTC"
-	# Required : $address		# Receiving address
-	# Optional : $options 	# Payment options : orderID,
+	# Required : $amount    # Billed amount
+	# Required : $currency  # Billed currency
+	# Required : $address   # Receiving address
+	# Optional : $options   # Payment options : orderID,
 	#                                           secret, 
 	#                                           callback,
 	#                                           company,
@@ -51,10 +51,10 @@ class Coinvoy {
 	
 	#----------------------------------------------------------------
 	# Create new payment template to use in client side
-	# Required : $amount		# Billed amount
-	# Required : $currency	# Billed currency
-	# Required : $address		# Receiving address
-	# Optional : $options		# Button options: orderID,
+	# Required : $amount        # Billed amount
+	# Required : $currency      # Billed currency
+	# Required : $address       # Receiving address
+	# Optional : $options       # Button options: orderID,
 	#                                         secret, 
 	#                                         callback,
 	#                                         company,
@@ -96,8 +96,8 @@ class Coinvoy {
 
 	#----------------------------------------------------------------
 	# Create new donation template to use in client side
-	# Required : $address		# Receiving address
-	# Optional : $options		# Donation options: orderID,
+	# Required : $address   # Receiving address
+	# Optional : $options   # Donation options: orderID,
 	#                                           secret,
 	#                                           callback,
 	#                                           company,
@@ -192,16 +192,8 @@ class Coinvoy {
 
 
 	#---------------------------------------------------
-	# Get Invoice Status:
-	#		"new"			-> Invoice has just been created and is waiting for payment
-	#		"approved"		-> Transaction is analyzed and approved as valid by our server
-	#		"confirmed"		-> Transaction is confirmed by the network
-	#		"completed"		-> Payment is forwarded to your address and the invoice is completed
-	#		"cancelled"		-> Payment is not received
-	#		"error"			-> An error occured during the process
-	#		"insufficient"	-> User paid insufficient amount, waiting for complimentary payment
-	#
-	# Returns the Status result or an error
+	# Required : $invoiceID
+	# Returns  : JSON object
 	#---------------------------------------------------
 	public function status($invoiceID)
 	{
@@ -218,11 +210,10 @@ class Coinvoy {
 	}
 
 
-	#---------------------------------------
-	# Get Invoice by ID
-	# Params : (string) $invoiceID
-	# Returns: (array) $invoice 
-	#---------------------------------------
+	#---------------------------------------------------
+	# Required : $invoiceID
+	# Returns  : JSON object
+	#---------------------------------------------------
 	public function invoice($invoiceID)
 	{
 		try {
