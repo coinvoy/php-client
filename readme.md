@@ -17,32 +17,32 @@ require_once('./coinvoy.php');
 
 $coinvoy = new Coinvoy();
 
-$amount   = 1.42;                           // Amount of invoice value
-$address  = "your cryptocurrency address"   // Your receiving address for Bitcoin, Litecoin or Dogecoin
-$currency = "BTC";                          // Currency of invoice value
+$amount        = 0.012;
+$address       = "receiving address";
+$returnAddress = "return address"
+$currency      = "BTC";
 
-$invoice = $coinvoy->invoice($amount, $address, $currency);
+$payment = $coinvoy->payment($amount, $currency, $address);
 
-var_dump($invoice);
+var_dump($payment);
 
 
-// $invoice->url; 	    - always find your invoice at https://coinvoy.net/invoice/{id}
-// $invoice->key
-// $invoice->html; 	    # default behaviour, includes an iframe and js listener
-// $invoice->address;   # display payment address
-// $invoice->key;		# this key is used for completing the escrow !important! do not lose
+// $payment['url']; 	    - always find your invoice at https://coinvoy.net/invoice/{id}
+// $invoice['html']; 	    # default behaviour, includes an iframe and js listener
+// $invoice['address'];   # display payment address
+// $invoice['key'];		    # this key is used for completing the escrow !important! do not lose
 
 ```
 
 ###List of all commands:
-- invoice($amount, $address, $currency, $options);                - creates live invoice
-- button($amount, $address, $currency, $options);                 - prepares a button template
+- payment($amount, $currency, $address, $options);                - creates payment
+- button($amount, $currency, $address, $options);                 - prepares a button template
 - donation($address, $options);                                   - prepares a donation template
-- invoiceFromHash($hash, $payWith);                               - creates live invoice from template hash
-- validateNotification(($invoiceId, $hash, $orderID, $address);   - checks if incoming payment notification is valid.
-- getStatus($invoiceId);                                          - current status of invoice [new,approved,confirmed,completed,cancelled]
-- getInvoice($invoiceId);                                         - get latest invoice object
-- freeEscrow($key);                                               - finalize an escrow with its unique key. This action sends funds to receiver
+- validateNotification($hash, $orderID, $invoiceID, $secret);     - checks if incoming payment notification is valid.
+- status($invoiceID);                                             - current status of invoice [new,approved,confirmed,completed,cancelled]
+- invoice($invoiceID);                                            - get latest invoice object
+- freeEscrow($key, $options);                                     - finalize an escrow with its unique key. This action sends funds to receiver
+- cancelEscrow($key, $options);                                   - cancel an escrow with its unique key. This action sends funds to owner
 
 Your feedback and suggestions are very much welcome. Please contact support@coinvoy.net for any input. 
 
