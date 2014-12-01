@@ -66,12 +66,9 @@
 	
 	$amount        = 0.0005;
 	$address       = "receiving address";
-	$address       = "1BRgcnYKHjkNRgvx4N5C3AEDzdikZxBrP1";
 	$returnAddress = "return address";
-	$returnAddress = "1EH7zheZGdLVbTkkurGAf9y3TSQ9PFLtk2";
 	$currency      = "BTC";
 	$key           = "key returned from escrow payment";
-	$key           = "LQHWDJ52AVHKLFROXIJF22SQOBW2TF2MYBCAAL5JEWVLTZPWKUV36WGIKGWG2YKMZR7JO4HTO4TXK===";
 
 	//createPayment($amount, $currency, $address);
 	//createEscrow($amount, $currency, $address, $returnAddress);
