@@ -173,23 +173,6 @@ class Coinvoy {
 
 		return $res;
 	}
-	#----------------------------------------------
-	# Validates received payment notification (IPN)
-	# Required : $hash      # provided by IPN call
-	# Required : $orderID   # provided by IPN call
-	# Required : $invoiceID # provided by IPN call
-	# Required : $secret    # secret used while creating payment
-	# Returns  : True/False
-	#----------------------------------------------
-	public function validateNotification($hash, $orderID, $invoiceID, $secret)
-	{
-		try {
-			return $hash == hash_hmac('sha256', $orderID.":".$invoiceID, $secret, FALSE);
-		} catch (Exception $e) {
-			return false;
-		}
-	}
-
 
 	#---------------------------------------------------
 	# Required : $invoiceID
@@ -227,6 +210,24 @@ class Coinvoy {
 			return $this->error("An error occured: ".$e->getMessage());
 		}
 	}
+	
+	#----------------------------------------------
+	# Validates received payment notification (IPN)
+	# Required : $hash      # provided by IPN call
+	# Required : $orderID   # provided by IPN call
+	# Required : $invoiceID # provided by IPN call
+	# Required : $secret    # secret used while creating payment
+	# Returns  : True/False
+	#----------------------------------------------
+	public function validateNotification($hash, $orderID, $invoiceID, $secret)
+	{
+		try {
+			return $hash == hash_hmac('sha256', $orderID.":".$invoiceID, $secret, FALSE);
+		} catch (Exception $e) {
+			return false;
+		}
+	}
+
 
 
 	#---------------------------------------
@@ -243,8 +244,8 @@ class Coinvoy {
 		# Fill post string
 		$postString = json_encode($postArray);
 
-		# $url = "https://coinvoy.net" . $url;
-		$url = "http://178.62.254.129" . $url;
+		$url = "https://coinvoy.net" . $url;
+		
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_POST, 1);
