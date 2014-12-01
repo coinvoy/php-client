@@ -6,7 +6,7 @@ PHP client library for Coinvoy API
 
 ##About Coinvoy
 
-Coinvoy is an online payment processor with an integrated exchange feature for established cryptocurrencies, namely Bitcoin, Litecoin and Dogecoin. It's objective is to provide an easiest yet the most secure way to accept cryptocurrencies.
+Coinvoy is an online payment processor. It's objective is to provide an easiest yet the most secure way to accept bitcoin.
 
 ##Get started
 
