@@ -19,7 +19,6 @@ $coinvoy = new Coinvoy();
 
 $amount        = 0.012;
 $address       = "receiving address";
-$returnAddress = "return address"
 $currency      = "BTC";
 
 $payment = $coinvoy->payment($amount, $currency, $address);
