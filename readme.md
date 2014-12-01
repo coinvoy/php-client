@@ -27,10 +27,10 @@ $payment = $coinvoy->payment($amount, $currency, $address);
 var_dump($payment);
 
 
-// $payment['url']; 	    - always find your invoice at https://coinvoy.net/invoice/{id}
-// $invoice['html']; 	    # default behaviour, includes an iframe and js listener
-// $invoice['address'];   # display payment address
-// $invoice['key'];		    # this key is used for completing the escrow !important! do not lose
+// $payment['url']; 	    # always find your invoice at https://coinvoy.net/invoice/{id}
+// $payment['html']; 	    # default behaviour, includes an iframe and js listener
+// $payment['address'];   # display payment address
+// $payment['key'];		    # this key is used for completing the escrow !important! do not lose
 
 ```
 
